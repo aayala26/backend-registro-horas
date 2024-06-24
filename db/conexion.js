@@ -5,7 +5,7 @@ const conexion = mysql.createConnection({
   host: 'uniminuto-db-instance.cxicswy2ibrh.us-east-2.rds.amazonaws.com',
   user: 'admin',
   password: '12345678',
-  database: ''
+  database: 'tareasResument'
 });
 
 // Conectar a la base de datos

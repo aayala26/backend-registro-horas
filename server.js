@@ -4,10 +4,37 @@ const db = require('./db/conexion'); // Importa la conexión a la base de datos
 
 
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json());
+const port = process.env.PORT || 3005;
 
 // Servir archivos estáticos exportados de Next.js
 app.use(express.static(path.join(__dirname, 'out')));
+// API para agregar un nuevo usuario
+app.post('/api/usuariosAdd', (req, res) => {
+  console.log("req.body",req.body);
+
+  const { nombre, cedula, apellidos, estado } = req.body;
+  const estadoNum = estado === 'Activo' ? 1 : 0;
+  db.query('INSERT INTO usuarios (NombreUsuario, Documento, ApellidoUsuario, Estado) VALUES (?, ?, ?, ?)', [nombre, cedula, apellidos, estadoNum], (err, result) => {
+    if (err) {
+      console.error('Error al agregar usuario:', err);
+      res.status(500).send('Error al agregar usuario');
+    } else {
+      res.send({ message: 'Usuario agregado correctamente', id: result.insertId });
+    }
+  });
+});
+
+app.get('/api/usuarios', (req, res) => {
+  db.query('SELECT IdUsuario,NombreUsuario as nombre , Documento as cedula,ApellidoUsuario as apellidos, Estado as estado FROM usuarios', (err, results) => {
+    if (err) {
+      console.error('Error al obtener usuarios:', err);
+      res.status(500).send('Error al obtener usuarios');
+    } else {
+      res.send(results);
+    }
+  });
+});
 
 // API para verificar la conexión a la base de datos
 app.get('/api/verificar-conexion', (req, res) => {
